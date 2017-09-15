@@ -1,0 +1,12 @@
+*.vcxproj
+Debug/Breakthrough.tlog/CL.read.1.tlog
+Debug/vc141.pdb
+*.idb
+Debug/Breakthrough.tlog/link.write.1.tlog
+*.filters
+Debug/Breakthrough.log
+*.lastbuildstate
+Debug/Breakthrough.tlog/CL.command.1.tlog
+*.tlog
+Debug/Player.obj
+*.obj
