@@ -3,6 +3,7 @@
 Node::Node(GameBoard *g, Node *p) {
 	parent = p;
 	gameState = g;
+	//moveMade = m;
 	//score = -1;
 }
 
@@ -10,7 +11,17 @@ Node::Node(GameBoard *g, Node *p, int s) {
 	parent = p;
 	gameState = g;
 	score = s;
+	//moveMade = m;
 }
+/*
+Node::Node(GameBoard *g, Node *p, int s, Move *m) {
+	parent = p;
+	gameState = g;
+	score = s;
+	moveMade = m;
+}
+*/
+
 
 
 Node::~Node() {	

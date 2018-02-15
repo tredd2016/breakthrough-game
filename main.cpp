@@ -11,6 +11,8 @@ int main() {
 	Player a2(2, 'O', false);
 		
 	GameBoard b(h1, a2);
+
+	//GameBoard a(h1, a2);
 	
 	/*
 	b.setBoardPiece(6, 2, '_');
@@ -25,36 +27,44 @@ int main() {
 
 	b.setBoardPiece(5, 7, 'O');
 	*/
+	//cout << a.prevMove.coulmPosition << endl;
+	//a.makeMove();
+	//cout << "COLM: " << a.prevMove.coulmPosition << "\t ROW: " << a.prevMove.rowPosition << "\t DIR: " << a.prevMove.direction << endl;
 
 	b.playGame();
+	char ab;
+	cin >> ab;
 	return 0;
 	
 	/*
 	Node *root = new Node(&b, nullptr);
 	/////////////////////////////////////////////////////
-	Node *level_1_nodeA = new Node(&b, root, -2);
+	Node *level_1_nodeA = new Node(&b, root, 0);
 	root->children.push_back(level_1_nodeA);
-	Node *level_1_nodeB = new Node(&b, root, -2);
+	Node *level_1_nodeB = new Node(&b, root, 0);
 	root->children.push_back(level_1_nodeB);
 	/////////////////////////////////////////////////////
-	Node *level_2_nodeA = new Node(&b, level_1_nodeA, -3);
+	Node *level_2_nodeA = new Node(&b, level_1_nodeA, 10);
 	level_1_nodeA->children.push_back(level_2_nodeA);
-	Node *level_2_nodeB = new Node(&b, level_1_nodeA, -3);
+	Node *level_2_nodeB = new Node(&b, level_1_nodeA, -10);
 	level_1_nodeA->children.push_back(level_2_nodeB);
 
-	Node *level_2_nodeC = new Node(&b, level_1_nodeB, -3);
+	Node *level_2_nodeC = new Node(&b, level_1_nodeB, 5);
 	level_1_nodeB->children.push_back(level_2_nodeC);
-	Node *level_2_nodeD = new Node(&b, level_1_nodeB, -3);
+	Node *level_2_nodeD = new Node(&b, level_1_nodeB, -7);
 	level_1_nodeB->children.push_back(level_2_nodeD);
+	*/
+
 	/////////////////////////////////////////////////////
-	Node *level_3_nodeA = new Node(&b, level_2_nodeA, -23);
+	/*
+	Node *level_3_nodeA = new Node(&b, level_2_nodeA, 10);
 	level_2_nodeA->children.push_back(level_3_nodeA);
-	Node *level_3_nodeB = new Node(&b, level_2_nodeA, 5);
+	Node *level_3_nodeB = new Node(&b, level_2_nodeA, 1000);
 	level_2_nodeA->children.push_back(level_3_nodeB);
 
-	Node *level_3_nodeC = new Node(&b, level_2_nodeB, -15);
+	Node *level_3_nodeC = new Node(&b, level_2_nodeB, -10);
 	level_2_nodeB->children.push_back(level_3_nodeC);
-	Node *level_3_nodeD = new Node(&b, level_2_nodeB, -1000);
+	Node *level_3_nodeD = new Node(&b, level_2_nodeB, -100);
 	level_2_nodeB->children.push_back(level_3_nodeD);
 
 	Node *level_3_nodeE = new Node(&b, level_2_nodeC, 5);
@@ -66,25 +76,20 @@ int main() {
 	level_2_nodeD->children.push_back(level_3_nodeG);
 	Node *level_3_nodeH = new Node(&b, level_2_nodeD, -20);
 	level_2_nodeD->children.push_back(level_3_nodeH);
-	///////////////////////////////////////////////////////////////////
+	*/
 
-	Node *level_4_nodeA = new Node(&b, level_3_nodeA, 7777);
-	level_3_nodeA->children.push_back(level_4_nodeA);
-	Node *level_4_nodeB = new Node(&b, level_3_nodeA, 10);
-	level_3_nodeA->children.push_back(level_4_nodeB);
-
-	//cout << "Node A: " << root->children[1]->children[0]->score << endl;
-	//cout << "Node B: " << root->children[1]->children[1]->score << endl;
-
-	b.negamax(root, 4, 1);
+	/*
+	b.negamax(root, 2, 1);
 	cout << "Root value: " << root->score << endl;
 	for (int i = 0; i < root->children.size(); ++i) {
 		cout << i << " value: " << root->children[i]->score << endl;
 	}
+
 	
+	char ab;
+	cin >> ab;
+	return 0;
 	*/
-	
-	
 
 }
 

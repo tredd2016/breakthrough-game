@@ -26,6 +26,7 @@ struct Move {
 	int rowPosition;
 	int coulmPosition;
 	char direction; // f - forward , l - left, r - right
+	//int score;
 
 	Move() {}
 	Move(int r, int c, char d) : rowPosition(r), coulmPosition(c), direction(d) {}

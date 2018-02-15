@@ -266,25 +266,35 @@ void GameBoard::AImakeMove(int depth) {
 	Node *root = new Node(this, nullptr);
 	buildTree(root, depth);
 	negamax(root, depth, 1);
-	
-	int v = INT_MIN;
-	Node *var = root->children[0]; 
-	for (int i = 0; i < root->children.size(); ++i) {
-		cout << i << " value: " << root->children[i]->score << endl;
-		if (root->children[i]->score > v) {
-			v = root->children[i]->score;
-			var = root->children[i];
+	//cout << "Root: " << root->score << endl;
+	//cout << root->gameState->prevMove.rowPosition << "  " << root->gameState->prevMove.coulmPosition << "  " << root->gameState->prevMove.direction << endl;
+	Node *var = root->children[0];
+	if (depth % 2 == 1) {
+		int v = INT_MAX;
+		for (int i = 0; i < root->children.size(); ++i) {
+			//cout << i << " value: " << root->children[i]->score << endl;
+			if (root->children[i]->score < v) {
+				v = root->children[i]->score;
+				var = root->children[i];
+			}
 		}
 	}
-
-	//NEED TO FETCH THE MOVE RELATED TO THE HIGHEST SCORE
-	//PERHAPS NOT SAFE - SHOULD CHANGE
-	for (int i = 0; i < root->children.size(); ++i) {
-
+	else {
+		int v = INT_MIN;
+		for (int i = 0; i < root->children.size(); ++i) {
+			//cout << i << " value: " << root->children[i]->score << endl;
+			if (root->children[i]->score > v) {
+				v = root->children[i]->score;
+				var = root->children[i];
+			}
+		}
 	}
 	
-	cout << "VAR: " << var->score << endl;
-	cout << var->gameState->prevMove.rowPosition << "  " << var->gameState->prevMove.coulmPosition << "  " << var->gameState->prevMove.direction << endl;
+	//cout << "Root: " << root->score << endl;
+	//cout << "VAR: " << var->score << endl;
+	//cout << var->gameState->prevMove.rowPosition << "  " << var->gameState->prevMove.coulmPosition << "  " << var->gameState->prevMove.direction << endl;
+	
+
 	makeMove(var->gameState->prevMove);
 	delete root;
 }
@@ -302,8 +312,7 @@ void GameBoard::buildLevel(Node *n) {
 		temp->prevMove = possibleMoves[i];
 
 		//Calculate score of the made move
-		int moveScore = temp->AIscore();
-		//cout << "Move score:\t" << moveScore << endl;
+		int moveScore = temp->AIscore();		
 
 		//Change game turn
 		temp->changeTurn();
@@ -328,6 +337,8 @@ void GameBoard::buildTree(Node *n, int depth) {
 	
 }
 
+// This shouldn't be required - just look another move ahead and arrive at the same result
+/*
 bool GameBoard::isOneAway() {
 	for (int i = 0; i < 8; ++i) {
 		if (Board[1][i] == 'X') {
@@ -365,7 +376,7 @@ bool GameBoard::isOneAway() {
 	}
 	return false;
 }
-
+*/
 // Need to fix all the values
 int GameBoard::AIscore() {
 	int score = 0; 
@@ -374,34 +385,10 @@ int GameBoard::AIscore() {
 	int pieceDiff, totPiece = 0;
 	// Case 1: winning? [Most signifigant digit]
 	// TODO: Fix this quick hack
-	if (isGG()) {		
-		for (int i = 0; i < 8; ++i) {
-			if (Board[0][i] == activePlayer.getPlayerPiece() || Board[7][i] == activePlayer.getPlayerPiece()) {
-				score += 1000000000;
-				break;
-			}
-			if (Board[0][i] == passivePlayer.getPlayerPiece() || Board[7][i] == passivePlayer.getPlayerPiece()) {
-				score -= 1000000000;
-				break;
-			}
-		}
-	}
+	if (isGG()) score += 1000000000;
+		
 	
-	// Case 2: One position away from winning
-	//TODO: Fix this quick hack
-	if (isOneAway()) {
-		bool isMe = false;
-		for (int i = 0; i < 8; ++i) {
-			if (Board[1][i] == activePlayer.getPlayerPiece() || Board[7][i] == activePlayer.getPlayerPiece()) {
-				isMe = true;
-				break;
-			}
-		}
-		if(!isMe) score += 1000000000 / 4;
-		else score -= 1000000000 / 4;
-	}
-
-	// Case 3: Who has the most pieces? [Next 2 signifigant digits]
+	// Case 2: Who has the most pieces? [Next 2 signifigant digits]
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
 			if (Board[i][j] == 'X') {
@@ -449,7 +436,6 @@ int GameBoard::minimax(Node *node, int depth, bool maxPlayer) {
 			node->children[i]->score = minimax(node->children[i], depth - 1, false);
 			if (node->children[i]->score > bestValue) bestValue = node->children[i]->score;
 		}
-		//cout << "Maxplayer best value " << bestValue << endl;
 		return bestValue;
 	}
 
@@ -459,10 +445,10 @@ int GameBoard::minimax(Node *node, int depth, bool maxPlayer) {
 			node->children[i]->score = minimax(node->children[i], depth - 1, true);
 			if (node->children[i]->score < bestValue) bestValue = node->children[i]->score;
 		}
-		//cout << " best value " << bestValue << endl;
 		return bestValue;
 	}
 }
+
 
 int GameBoard::negamax(Node *node, int depth, int POV) {
 	if (depth == 0 || node->children.empty()) return POV * node->score;

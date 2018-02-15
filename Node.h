@@ -7,6 +7,7 @@
 using namespace std;
 
 class GameBoard;
+struct Move;
 
 class Node {
 public:
