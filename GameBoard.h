@@ -73,11 +73,16 @@ public:
 	void AImakeMove(int depth);
 	void buildLevel(Node *n);
 	void buildTree(Node* n, int depth);
-	bool isOneAway();
-	int AIscore();
+	int isOneAway(Player AI);
+	int AIscore(Player AI);
 	int minimax(Node *root, int depth, bool maxPlayer);
 	int negamax(Node *node, int depth, int POV);
-	
+	int homeRowCount(Player AI);
+	int vertAdj(Tile t);
+	int horzAdj(Tile t); 
+	int ColumnHole();
+	// add function for number of moves availible to piece
+
 	//---------------------------------------
 	void playGame();
 };

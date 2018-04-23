@@ -217,6 +217,7 @@ Move GameBoard::getMove() {
 
 }
 
+// Needs to be corrected to account for running out of pieces
 bool GameBoard::isGG() {
 	for (int i = 0; i<8; ++i) {
 		if (Board[0][i] == 'X') return true;
@@ -265,11 +266,26 @@ void GameBoard::AImakeMove(int depth) {
 	//Build out the tree
 	Node *root = new Node(this, nullptr);
 	buildTree(root, depth);
-	negamax(root, depth, 1);
-	//cout << "Root: " << root->score << endl;
+
+	if(depth % 2 == 0) negamax(root, depth, -1);
+	else negamax(root, depth, 1);
+
+	cout << "Root: " << root->score << endl;
 	//cout << root->gameState->prevMove.rowPosition << "  " << root->gameState->prevMove.coulmPosition << "  " << root->gameState->prevMove.direction << endl;
-	Node *var = root->children[0];
-	if (depth % 2 == 1) {
+	Node *var = root->children[0];	
+	
+	if (depth % 2 == 0) {
+		int v = INT_MIN;
+		for (int i = 0; i < root->children.size(); ++i) {
+			cout << i << " value: " << root->children[i]->score << endl;
+			if (root->children[i]->score > v) {
+				v = root->children[i]->score;
+				var = root->children[i];
+			}
+		}
+	}
+	
+	else {
 		int v = INT_MAX;
 		for (int i = 0; i < root->children.size(); ++i) {
 			//cout << i << " value: " << root->children[i]->score << endl;
@@ -279,22 +295,8 @@ void GameBoard::AImakeMove(int depth) {
 			}
 		}
 	}
-	else {
-		int v = INT_MIN;
-		for (int i = 0; i < root->children.size(); ++i) {
-			//cout << i << " value: " << root->children[i]->score << endl;
-			if (root->children[i]->score > v) {
-				v = root->children[i]->score;
-				var = root->children[i];
-			}
-		}
-	}
-	
-	//cout << "Root: " << root->score << endl;
-	//cout << "VAR: " << var->score << endl;
-	//cout << var->gameState->prevMove.rowPosition << "  " << var->gameState->prevMove.coulmPosition << "  " << var->gameState->prevMove.direction << endl;
-	
 
+	cout << "Pick: " << -(var->score) << endl;
 	makeMove(var->gameState->prevMove);
 	delete root;
 }
@@ -312,7 +314,7 @@ void GameBoard::buildLevel(Node *n) {
 		temp->prevMove = possibleMoves[i];
 
 		//Calculate score of the made move
-		int moveScore = temp->AIscore();		
+		int moveScore = temp->AIscore(activePlayer);		
 
 		//Change game turn
 		temp->changeTurn();
@@ -337,22 +339,30 @@ void GameBoard::buildTree(Node *n, int depth) {
 	
 }
 
-// This shouldn't be required - just look another move ahead and arrive at the same result
-/*
-bool GameBoard::isOneAway() {
+
+int GameBoard::isOneAway(Player AI) {
 	for (int i = 0; i < 8; ++i) {
 		if (Board[1][i] == 'X') {
 			// Check if piece can be stopped
 			if (i == 0) {
-				if (Board[0][1] == '_') return true;
+				if (Board[0][1] == '_') {
+					if (AI.getPlayerPiece() == 'X') return 1;
+					else return -1;
+				}
 				else continue; 
 			}
 			else if (i == 7) {
-				if (Board[0][6] == '_') return true;
+				if (Board[0][6] == '_') {
+					if (AI.getPlayerPiece() == 'X') return 1;
+					else return -1;
+				}
 				else continue;
 			}
 			else {
-				if (Board[0][i - 1] == '_' && Board[0][i + 1] == '_') return true;
+				if (Board[0][i - 1] == '_' && Board[0][i + 1] == '_') {
+					if (AI.getPlayerPiece() == 'X') return 1;
+					else return -1;
+				}
 				else continue;
 			}
 			
@@ -360,59 +370,79 @@ bool GameBoard::isOneAway() {
 		// Same logic for 'O'
 		if (Board[6][i] == 'O') {
 			if (i == 0) {
-				if (Board[7][1] == '_') return true;
+				if (Board[7][1] == '_') {
+					if (AI.getPlayerPiece() == 'O') return 1;
+					else return -1;
+				}
 				else continue;
 			}
 			else if (i == 7) {
-				if (Board[7][6] == '_') return true;
+				if (Board[7][6] == '_') {
+					if (AI.getPlayerPiece() == 'O') return 1;
+					else return -1;
+				}
 				else continue;
 			}
 			else {
-				if (Board[7][i - 1] == '_' && Board[7][i + 1] == '_') return true;
+				if (Board[7][i - 1] == '_' && Board[7][i + 1] == '_') {
+					if (AI.getPlayerPiece() == 'O') return 1;
+					else return -1;
+				}
 				else continue;
 			}
 			
 		}
 	}
-	return false;
+	return 0;
 }
-*/
-// Need to fix all the values
-int GameBoard::AIscore() {
-	int score = 0; 
-	int numX = 0;
-	int numO = 0;
-	int pieceDiff, totPiece = 0;
-	// Case 1: winning? [Most signifigant digit]
-	// TODO: Fix this quick hack
-	if (isGG()) score += 1000000000;
-		
+
+int GameBoard::AIscore(Player AI) {
+	int score = 0;
 	
-	// Case 2: Who has the most pieces? [Next 2 signifigant digits]
+	if (isGG()) {
+		for (int i = 0; i < 8; ++i) {
+			if (Board[0][i] == AI.getPlayerPiece() || Board[7][i] == AI.getPlayerPiece()) {
+				return 10000000;
+			}
+			if (Board[0][i] == AI.getOppPiece() || Board[7][i] == AI.getOppPiece()) {
+				return -10000000;
+			}
+		}
+		cout << "isGG() didn't hit an expected match in AIScore(), returning as fail" << endl;
+		return 0;
+	}
+	
+	// Possible values: 0 = false, 1 = true for AI, -1 = true for opponent
+	score += isOneAway(AI) * 500000;
+
+	//Give points for number of pieces
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
-			if (Board[i][j] == 'X') {
-				++numX;
-				++totPiece;
+			// Skip blank spaces
+			if (Board[i][j] == '_') continue;
+
+			//Give value to having pieces
+			if (Board[i][j] == AI.getPlayerPiece()) {
+				score += 50000;
 			}
-			if (Board[i][j] == 'O') {
-				++numO;
-				++totPiece;
+			//Subtract value for opponent having pieces
+			if (Board[i][j] == AI.getOppPiece()) {
+				score -= 50000;
 			}
 		}
 	}
-	if (activePlayer.getPlayerPiece() == 'X') pieceDiff = numX - numO;
-	else pieceDiff = numO - numX;
-	pieceDiff *= 10000;
-	score = score + pieceDiff;
-
-	//Case 4: How many pieces are left? [Next 2 signifigant pieces]
-	// Better if lower number of pieces if we're ahead - Worse if lower number of pieces and we're behind
+	
+	//Give points for Home Row
+	int homeRow = homeRowCount(AI);
+	if (homeRow == 8) score += 30000;
+	else score += (homeRow * 2500);
 
 
-
-
-	// Case 4: # of row/coulm segment left
+	//Take away points for Columns without a single piece
+	//int ColumnCovered = 8 - ColumnHole();
+	//score -= (ColumnCovered * 200);
+	
+	
 
 	// Case 5: Psudo-Random number to avoid appearing deterministic
 	random_device rd;  //Will be used to obtain a seed for the random number engine
@@ -421,8 +451,62 @@ int GameBoard::AIscore() {
 	int r = dis(gen) % 99;
 	score = score + r;
 
-
 	return score;
+}
+
+
+int GameBoard::homeRowCount(Player AI) {
+	int pieces = 0;
+
+	if (AI.getPlayerPiece() == 'X') {
+		for (int i = 0; i < 8; ++i) {
+			if (Board[7][i] == 'X') ++pieces;
+		}
+	}
+	else {
+		for (int i = 0; i < 8; ++i) {
+			if (Board[0][i] == 'O') ++pieces;
+		}
+	}
+	return pieces;
+}
+
+int GameBoard::vertAdj(Tile t) {
+	int pieces = 0;	
+	if (t.coulmPosition - 1 >= 0) {
+		if (Board[t.rowPosition][t.coulmPosition - 1] == activePlayer.getPlayerPiece()) ++pieces;
+	}
+
+	if (t.coulmPosition + 1 < 8) {
+		if (Board[t.rowPosition][t.coulmPosition + 1] == activePlayer.getPlayerPiece()) ++pieces;
+	}
+	return pieces;
+}
+
+int GameBoard::horzAdj(Tile t) {
+	int pieces = 0;
+	if (t.rowPosition - 1 >= 0) {
+		if (Board[t.rowPosition - 1][t.coulmPosition] == activePlayer.getPlayerPiece()) ++pieces;
+	}
+	if (t.rowPosition + 1 < 8) {
+		if (Board[t.rowPosition + 1][t.coulmPosition] == activePlayer.getPlayerPiece()) ++pieces;
+	}
+	return pieces;
+}
+
+// This could be optimized to not interate over the entire board again
+// Needs to be renamed - title is Hole but counts covered
+int GameBoard::ColumnHole() {
+	int columnCovered = 0;
+	for (int j = 0; j < 8; ++j) {
+		for (int i = 0; i < 8; ++i) {
+			if (Board[i][j] == activePlayer.getPlayerPiece()) {
+				++columnCovered;
+				break;
+			}
+		}
+	}
+	return columnCovered;
 }
 
 int GameBoard::minimax(Node *node, int depth, bool maxPlayer) {

@@ -11,127 +11,76 @@ int main() {
 	Player a2(2, 'O', false);
 		
 	GameBoard b(h1, a2);
+		
+	//b.setBoardPiece(0, 0, '_');
+	//b.setBoardPiece(1, 0, '_');
+	//b.printBoard();
 
-	//GameBoard a(h1, a2);
-	
-	/*
-	b.setBoardPiece(6, 2, '_');
-	b.setBoardPiece(4, 2, 'X');
+	//cout << b.activePlayer.getPlayerNum() << ": " << b.AIscore() << endl;
+	//b.setActPlayer(a2);
+	//cout << b.homeRowCount(a2) << endl;
+	//cout << b.activePlayer.getPlayerNum() << ": " << b.AIscore() << endl;
 
-	b.setBoardPiece(7, 5, '_');
-	b.setBoardPiece(7, 7, '_');
-	b.setBoardPiece(6, 6, '_');
+	//b.AImakeMove(3);
 
-	b.setBoardPiece(6, 7, 'X');
-	b.setBoardPiece(1, 3, '_');
-
-	b.setBoardPiece(5, 7, 'O');
-	*/
-	//cout << a.prevMove.coulmPosition << endl;
-	//a.makeMove();
-	//cout << "COLM: " << a.prevMove.coulmPosition << "\t ROW: " << a.prevMove.rowPosition << "\t DIR: " << a.prevMove.direction << endl;
+	//b.printBoard();
 
 	b.playGame();
+
 	char ab;
 	cin >> ab;
+
 	return 0;
 	
 	/*
-	Node *root = new Node(&b, nullptr);
-	/////////////////////////////////////////////////////
-	Node *level_1_nodeA = new Node(&b, root, 0);
-	root->children.push_back(level_1_nodeA);
-	Node *level_1_nodeB = new Node(&b, root, 0);
-	root->children.push_back(level_1_nodeB);
-	/////////////////////////////////////////////////////
-	Node *level_2_nodeA = new Node(&b, level_1_nodeA, 10);
-	level_1_nodeA->children.push_back(level_2_nodeA);
-	Node *level_2_nodeB = new Node(&b, level_1_nodeA, -10);
-	level_1_nodeA->children.push_back(level_2_nodeB);
+	Node *root = new Node(&b, nullptr, INT_MIN);
 
-	Node *level_2_nodeC = new Node(&b, level_1_nodeB, 5);
-	level_1_nodeB->children.push_back(level_2_nodeC);
-	Node *level_2_nodeD = new Node(&b, level_1_nodeB, -7);
-	level_1_nodeB->children.push_back(level_2_nodeD);
-	*/
+	Node *L1A = new Node(&b, root, INT_MIN);
+	Node *L1B = new Node(&b, root, INT_MIN);
+	root->children.push_back(L1A);
+	root->children.push_back(L1B);
 
-	/////////////////////////////////////////////////////
-	/*
-	Node *level_3_nodeA = new Node(&b, level_2_nodeA, 10);
-	level_2_nodeA->children.push_back(level_3_nodeA);
-	Node *level_3_nodeB = new Node(&b, level_2_nodeA, 1000);
-	level_2_nodeA->children.push_back(level_3_nodeB);
 
-	Node *level_3_nodeC = new Node(&b, level_2_nodeB, -10);
-	level_2_nodeB->children.push_back(level_3_nodeC);
-	Node *level_3_nodeD = new Node(&b, level_2_nodeB, -100);
-	level_2_nodeB->children.push_back(level_3_nodeD);
+	Node *L2A = new Node(&b, L1A, INT_MIN);
+	Node *L2B = new Node(&b, L1A, INT_MIN);
+	L1A->children.push_back(L2A);
+	L1A->children.push_back(L2B);
 
-	Node *level_3_nodeE = new Node(&b, level_2_nodeC, 5);
-	level_2_nodeC->children.push_back(level_3_nodeE);
-	Node *level_3_nodeF = new Node(&b, level_2_nodeC, -999);
-	level_2_nodeC->children.push_back(level_3_nodeF);
+	Node *L2C = new Node(&b, L1B, INT_MIN);
+	Node *L2D = new Node(&b, L1B, INT_MIN);
+	L1B->children.push_back(L2C);
+	L1B->children.push_back(L2D);
 
-	Node *level_3_nodeG = new Node(&b, level_2_nodeD, -7);
-	level_2_nodeD->children.push_back(level_3_nodeG);
-	Node *level_3_nodeH = new Node(&b, level_2_nodeD, -20);
-	level_2_nodeD->children.push_back(level_3_nodeH);
-	*/
 
-	/*
-	b.negamax(root, 2, 1);
-	cout << "Root value: " << root->score << endl;
+	
+	Node *L3A = new Node(&b, L2A, 10);
+	Node *L3B = new Node(&b, L2A, 5);
+	L2A->children.push_back(L3A);
+	L2A->children.push_back(L3B);
+
+	Node *L3C = new Node(&b, L2B, -10);	
+	L2B->children.push_back(L3C);
+	
+	Node *L3D = new Node(&b, L2C, 5);
+	Node *L3E = new Node(&b, L2C, -100);
+	L2C->children.push_back(L3D);
+	L2C->children.push_back(L3E);
+
+	Node *L3F = new Node(&b, L2D, -7);	
+	L2D->children.push_back(L3F);
+	
+
+	cout << b.negamax(root, 3, -1) << endl;
+
+	cout << "Result: " << root->score << endl;
+	
 	for (int i = 0; i < root->children.size(); ++i) {
-		cout << i << " value: " << root->children[i]->score << endl;
+		cout << "i: " << i << "\t" << root->children[i]->score << endl;
 	}
 
-	
 	char ab;
 	cin >> ab;
+
 	return 0;
 	*/
-
 }
-
-
-/*
-Node *sam = new Node(&b, nullptr);
-//int ad = b.AIscore(sam);
-b.printBoard();
-Move m(6, 0, 'f');
-b.makeMove(m);
-cout << b.prevMove.rowPosition << "\t" << b.prevMove.coulmPosition << "\t" << b.prevMove.direction << endl;
-b.changeTurn();
-
-b.printBoard();
-
-b.makeMove();
-cout << b.prevMove.rowPosition << "\t" << b.prevMove.coulmPosition << "\t" << b.prevMove.direction << endl;
-b.changeTurn();
-b.printBoard();
-//Node *root = new Node(&b, nullptr);
-
-//int abc = b.AIscore(root);
-
-for (int i = 0; i < root->children.size(); ++i) {
-cout << root->children[i]->gameState->prevMove.rowPosition << '\t' << root->children[i]->gameState->prevMove.coulmPosition << '\t' << root->children[i]->gameState->prevMove.direction << endl;
-}
-
-
-*/
-
-
-
-/*
-b.setBoardPiece(6, 2, '_');
-b.setBoardPiece(4, 2, 'X');
-
-b.setBoardPiece(3, 3, 'O');
-b.setBoardPiece(1, 3, '_');
-b.printBoard();
-
-b.changeTurn();
-b.AImakeMove(2);
-b.printBoard();
-//cout << "AIScore(): " << b.AIscore() << endl;
-*/
